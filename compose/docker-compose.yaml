@@ -77,6 +77,40 @@ services:
       - 9082:8082
       - 50051:50051
 
+  #######################################################
+  # Clinical Service
+  ######################################################
+  clinical-db:
+    image: '${POSTGRES_IMAGE}'
+    environment:
+      PGPORT: 5432
+      POSTGRES_DB: clinical-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - 18889:5432
+  clinical-service:
+    image: '${CLINICAL_SERVICE_IMAGE}'
+    restart: always
+    depends_on:
+      - ego-api
+      - ego-ui
+      - clinical-db
+    environment:
+      SPRING_PROFILES_ACTIVE: 'auth'
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://program-db:5432/program-db?stringtype=unspecified'
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_FLYWAY_ENABLED: 'true'
+      APP_EGO_URL: 'http://ego-api:8088/api'
+      APP_EGO_CLIENT_ID: 'clinical'
+      APP_EGO_CLIENT_SECRET: 'clinicalsecret'
+      APP_MAIL_ENABLED: 'false'
+      APP_DCC_ADMIN_PERMISSION: 'PROGRAMSERVICE.WRITE'
+    ports:
+      - 9082:8082
+      - 50051:50051
+
   #####################################################
   # ARGO Platform - GraphQL API Gateway
   #####################################################
