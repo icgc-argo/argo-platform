@@ -65,6 +65,18 @@ const InputStories = storiesOf(`${__dirname}`, module)
 
     return (
       <div style={{ width: '300px' }}>
+        <Select
+          aria-label="demo-select"
+          options={[
+            { content: 'Value 1', value: 'v1' },
+            { content: 'Value 2', value: 'v2' },
+            { content: 'Value 3', value: 'v3' },
+            { content: 'Value 4', value: 'v4' },
+          ]}
+          onChange={action('onChange')}
+          onBlur={() => '[parent func]'}
+          {...knobs}
+        />
         <RefactoredSelect />
       </div>
     );

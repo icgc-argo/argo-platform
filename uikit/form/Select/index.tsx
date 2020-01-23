@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, createRef, useEffect } from 'react';
 import { css } from '@emotion/core';
 
 import { StyledInputWrapper, INPUT_SIZES, InputSize, StyledInputWrapperProps } from '../common';
@@ -172,18 +172,43 @@ export const RefactoredSelect: React.ComponentType<{
   ...props
 }) => {
   const [isExpanded, setExpanded] = useState(false);
+  const buttonRef = React.createRef<HTMLButtonElement>();
+  const dropdownRef = React.createRef<HTMLOListElement>();
 
+  // close on Escape key
   const escapeKeyHandler = e => {
     if (e.key === 'Escape' && isExpanded) {
       setExpanded(false);
     }
   };
 
-  const clickOutsideHandler = () => false;
+  // close on clicking outside
+  const clickOutsideHandler = event => {
+    if (buttonRef.current.contains(event.target) || dropdownRef.current.contains(event.target)) {
+      return;
+    }
+    setExpanded(false);
+  };
+
+  useEffect(() => {
+    if (isExpanded) {
+      document.addEventListener('mouseup', clickOutsideHandler);
+      // focus first el
+      const firstOption: HTMLElement = dropdownRef.current.querySelector(':first-child');
+      firstOption.focus();
+    } else {
+      document.removeEventListener('mouseup', clickOutsideHandler);
+    }
+
+    return () => {
+      document.removeEventListener('mouseup', clickOutsideHandler);
+    };
+  }, [isExpanded]);
 
   return (
     <div onKeyUp={escapeKeyHandler}>
       <button
+        ref={buttonRef}
         onClick={() => setExpanded(!isExpanded)}
         aria-haspopup={true}
         aria-controls={'dropdown'}
@@ -191,7 +216,7 @@ export const RefactoredSelect: React.ComponentType<{
         Select
       </button>
       {isExpanded && (
-        <ol role="list" id="dropdown">
+        <ol role="list" id="dropdown" ref={dropdownRef}>
           <li>1</li>
           <li>2</li>
           <li>3</li>
