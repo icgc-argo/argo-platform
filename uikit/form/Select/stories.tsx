@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { text, boolean, radios } from '@storybook/addon-knobs';
 
-import Select from '.';
+import Select, { RefactoredSelect } from '.';
 
 const createKnobs = () => {
   const error = boolean('error', false);
@@ -27,38 +27,47 @@ const createKnobs = () => {
     size,
   };
 };
+const InputStories = storiesOf(`${__dirname}`, module)
+  .add('Basic', () => {
+    const knobs = createKnobs();
+    return (
+      <div style={{ width: '200px' }}>
+        <Select
+          aria-label="demo-select"
+          options={[
+            { content: 'Value 1', value: 'v1' },
+            { content: 'Value 2', value: 'v2' },
+            { content: 'Value 3', value: 'v3' },
+            { content: 'Value 4', value: 'v4' },
+          ]}
+          onChange={action('onChange')}
+          onBlur={() => '[parent func]'}
+          {...knobs}
+        />
+        <Select
+          aria-label="demo-select"
+          value="v1"
+          options={[
+            { content: 'Value 1', value: 'v1' },
+            { content: 'Value 2', value: 'v2' },
+            { content: 'Value 3', value: 'v3' },
+            { content: 'Value 4', value: 'v4' },
+          ]}
+          onChange={action('onChange')}
+          onBlur={() => '[parent func]'}
+          {...knobs}
+        />
+      </div>
+    );
+  })
+  .add('Refactored', () => {
+    const knobs = createKnobs();
 
-const InputStories = storiesOf(`${__dirname}`, module).add('Basic', () => {
-  const knobs = createKnobs();
-  return (
-    <div style={{ width: '200px' }}>
-      <Select
-        aria-label="demo-select"
-        options={[
-          { content: 'Value 1', value: 'v1' },
-          { content: 'Value 2', value: 'v2' },
-          { content: 'Value 3', value: 'v3' },
-          { content: 'Value 4', value: 'v4' },
-        ]}
-        onChange={action('onChange')}
-        onBlur={() => '[parent func]'}
-        {...knobs}
-      />
-      <Select
-        aria-label="demo-select"
-        value="v1"
-        options={[
-          { content: 'Value 1', value: 'v1' },
-          { content: 'Value 2', value: 'v2' },
-          { content: 'Value 3', value: 'v3' },
-          { content: 'Value 4', value: 'v4' },
-        ]}
-        onChange={action('onChange')}
-        onBlur={() => '[parent func]'}
-        {...knobs}
-      />
-    </div>
-  );
-});
+    return (
+      <div style={{ width: '300px' }}>
+        <RefactoredSelect />
+      </div>
+    );
+  });
 
 export default InputStories;

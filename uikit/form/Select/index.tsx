@@ -139,4 +139,66 @@ const Select: React.ComponentType<{
   );
 };
 
+export const RefactoredSelect: React.ComponentType<{
+  ['aria-label']?: string;
+  options?: {
+    value: any;
+    content: any;
+  }[];
+  size?: InputSize;
+  error?: boolean;
+  errorMessage?: string;
+  disabled?: boolean;
+  onChange?: (value: string) => void;
+  onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void;
+  popupPosition?: PopupPosition;
+  placeholder?: string;
+  id?: string;
+  value?: string;
+  className?: string;
+  style?: React.CSSProperties;
+}> = ({
+  placeholder = '- Select an option -',
+  id,
+  value,
+  onChange,
+  onBlur = () => {},
+  disabled = false,
+  size = INPUT_SIZES.SM,
+  options = [],
+  error = false,
+  errorMessage = '',
+  popupPosition = POPUP_POSITIONS.DOWN,
+  ...props
+}) => {
+  const [isExpanded, setExpanded] = useState(false);
+
+  const escapeKeyHandler = e => {
+    if (e.key === 'Escape' && isExpanded) {
+      setExpanded(false);
+    }
+  };
+
+  const clickOutsideHandler = () => false;
+
+  return (
+    <div onKeyUp={escapeKeyHandler}>
+      <button
+        onClick={() => setExpanded(!isExpanded)}
+        aria-haspopup={true}
+        aria-controls={'dropdown'}
+      >
+        Select
+      </button>
+      {isExpanded && (
+        <ol role="list" id="dropdown">
+          <li>1</li>
+          <li>2</li>
+          <li>3</li>
+        </ol>
+      )}
+    </div>
+  );
+};
+
 export default Select;
